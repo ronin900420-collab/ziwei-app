@@ -1,8 +1,7 @@
 // ══════════════════════════════════════════════════════
-//  天機閣・奇門命論  —  app.js  v4（功能分層）
-//  ⚠️  請將下方 API_KEY 換成您自己的 Anthropic API Key
+//  天機閣・奇門命論  —  app.js  v5（安全版，Key 在伺服器）
+//  不需要填任何 Key，Key 設定在 Vercel 環境變數裡
 // ══════════════════════════════════════════════════════
-const API_KEY = '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'; // ← 換成您的 Key
 
 const EXPIRE_DAYS = 3;
 const UNKNOWN_HOUR = '時辰不詳';
@@ -41,9 +40,8 @@ const SIHUA = {
   癸:{lu:'破軍',quan:'巨門',ke:'太陰', ji:'貪狼'},
 };
 
-// ── 功能勾選狀態（管理者用）─────────────────────────
+// ── 功能勾選（管理者用）──────────────────────────────
 const featureState = { liunian: false, person: false };
-
 window.toggleFeature = function(key) {
   featureState[key] = !featureState[key];
   const item  = document.getElementById(`feat-${key}`);
@@ -59,14 +57,12 @@ window.toggleFeature = function(key) {
 
 // ── 時辰不詳推算 ──────────────────────────────────────
 function guessMingCandidates(year, month) {
-  const yearIdx = (year - 4) % 60;
-  const ganIdx  = ((yearIdx % 10) + 10) % 10;
   const results = [];
   [0, 4, 8].forEach(h => {
     const mingIdx = ((14 - month - h) % 12 + 12) % 12;
     const mingZhi = ZHI[mingIdx];
     const stars   = STAR_TABLE[mingZhi] || {main:'天空'};
-    results.push({ hourLabel: ZHI[h]+'時附近', mingZhi, mainStar: stars.main });
+    results.push({ mingZhi, mainStar: stars.main });
   });
   const seen = new Set();
   return results.filter(r => { if(seen.has(r.mingZhi)) return false; seen.add(r.mingZhi); return true; });
@@ -74,19 +70,19 @@ function guessMingCandidates(year, month) {
 
 // ── 命盤計算 ──────────────────────────────────────────
 function calcChart(year, month, day, hourStr) {
-  const yearIdx = (year - 4) % 60;
-  const ganIdx  = ((yearIdx % 10) + 10) % 10;
-  const zhiIdx  = ((yearIdx % 12) + 12) % 12;
-  const yearGan = GAN[ganIdx];
-  const yearZhi = ZHI[zhiIdx];
-  const sh      = SIHUA[yearGan] || {lu:'—',quan:'—',ke:'—',ji:'—'};
+  const yearIdx   = (year - 4) % 60;
+  const ganIdx    = ((yearIdx % 10) + 10) % 10;
+  const zhiIdx    = ((yearIdx % 12) + 12) % 12;
+  const yearGan   = GAN[ganIdx];
+  const yearZhi   = ZHI[zhiIdx];
+  const sh        = SIHUA[yearGan] || {lu:'—',quan:'—',ke:'—',ji:'—'};
   const isUnknown = (hourStr === UNKNOWN_HOUR);
   const hourNum   = isUnknown ? 6 : (HOUR_MAP[hourStr] ?? 8);
   const mingIdx   = ((14 - month - hourNum) % 12 + 12) % 12;
   const mingZhi   = ZHI[mingIdx];
   const palaces   = PALACE_NAMES.map((name, i) => {
-    const zi   = ZHI[(mingIdx + i) % 12];
-    const s    = STAR_TABLE[zi] || {main:'天空',aux:[],hua:''};
+    const zi = ZHI[(mingIdx + i) % 12];
+    const s  = STAR_TABLE[zi] || {main:'天空',aux:[],hua:''};
     return { name, zhi: zi, main: s.main, aux: s.aux, hua: s.hua, isMing: i === 0 };
   });
   return { palaces, yearGan, yearZhi, mingZhi, sihua: sh, isUnknown };
@@ -96,8 +92,7 @@ function calcChart(year, month, day, hourStr) {
 function buildLink(name, gender, year, month, day, hour, features) {
   const expireTs = Date.now() + EXPIRE_DAYS * 24 * 60 * 60 * 1000;
   const params = new URLSearchParams({
-    n: name, g: gender,
-    y: year, m: month, d: day, h: hour,
+    n: name, g: gender, y: year, m: month, d: day, h: hour,
     exp: expireTs,
     fl: features.liunian ? '1' : '0',
     fp: features.person  ? '1' : '0',
@@ -109,17 +104,14 @@ function parseLink() {
   const p = new URLSearchParams(location.search);
   if (!p.has('n') || !p.has('y')) return null;
   return {
-    name:    p.get('n'),
-    gender:  p.get('g') || 'male',
-    year:    parseInt(p.get('y')),
-    month:   parseInt(p.get('m')),
-    day:     parseInt(p.get('d')),
-    hour:    p.get('h'),
-    exp:     parseInt(p.get('exp') || '0'),
-    features: {
-      liunian: p.get('fl') === '1',
-      person:  p.get('fp') === '1',
-    },
+    name:     p.get('n'),
+    gender:   p.get('g') || 'male',
+    year:     parseInt(p.get('y')),
+    month:    parseInt(p.get('m')),
+    day:      parseInt(p.get('d')),
+    hour:     p.get('h'),
+    exp:      parseInt(p.get('exp') || '0'),
+    features: { liunian: p.get('fl') === '1', person: p.get('fp') === '1' },
   };
 }
 
@@ -161,7 +153,7 @@ function renderGrid(chart) {
   center.innerHTML = `
     <div class="center-title">天機閣</div>
     <div class="center-sub">${chart.yearGan}${chart.yearZhi}年生</div>
-    <div class="center-sub">命宮：${chart.mingZhi}宮${chart.isUnknown ? '（推算）' : ''}</div>
+    <div class="center-sub">命宮：${chart.mingZhi}宮${chart.isUnknown?'（推算）':''}</div>
     <div style="height:4px"></div>
     <div class="center-sihua">化祿：${sh.lu}　化權：${sh.quan}<br>化科：${sh.ke}　化忌：${sh.ji}</div>
     <div class="center-hint">▸ 點擊宮位</div>
@@ -174,11 +166,11 @@ function renderGrid(chart) {
     el.style.gridColumn = pos.c;
     el.style.gridRow    = pos.r;
     el.innerHTML = `
-      <div class="palace-name">${pal.name}${pal.isMing ? (chart.isUnknown ? ' ?' : ' ★') : ''}</div>
+      <div class="palace-name">${pal.name}${pal.isMing?(chart.isUnknown?' ?':' ★'):''}</div>
       <div class="palace-zhi">${pal.zhi}宮</div>
       <div class="star-main">${pal.main}</div>
-      ${pal.hua    ? `<div class="star-hua">${pal.hua}</div>`           : ''}
-      ${pal.aux.length ? `<div class="star-aux">${pal.aux.join('・')}</div>` : ''}
+      ${pal.hua?`<div class="star-hua">${pal.hua}</div>`:''}
+      ${pal.aux.length?`<div class="star-aux">${pal.aux.join('・')}</div>`:''}
     `;
     el.addEventListener('click', () => analyzePalace(el, pal));
     grid.appendChild(el);
@@ -192,7 +184,7 @@ function renderUnknownBanner(person, chart) {
   const candidates = guessMingCandidates(person.year, person.month);
   const banner = document.createElement('div');
   banner.id = 'unknown-banner';
-  banner.style.cssText = 'background:#fff8e0;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:13px;line-height:1.9;color:var(--ink)';
+  banner.style.cssText = 'background:#fff8e0;border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:18px;font-size:13px;line-height:1.9';
   const tags = candidates.map(c =>
     `<span style="display:inline-block;background:#fff;border:1px solid var(--border);border-radius:6px;padding:2px 10px;margin:2px 4px;font-size:12px;color:var(--gold-dk)">${c.mingZhi}宮（${c.mainStar}）</span>`
   ).join('');
@@ -200,56 +192,41 @@ function renderUnknownBanner(person, chart) {
     <div style="font-weight:500;color:var(--gold-dk);margin-bottom:6px">⚠ 時辰不詳・命宮為推算值</div>
     <div style="color:#888;font-size:12px">根據出生年月，最可能的命宮：</div>
     <div style="margin:8px 0">${tags}</div>
-    <div style="color:#bbb;font-size:11px">命盤標示「?」為推算值，其餘宮位及生年四化不受時辰影響，解析仍具參考價值。</div>
+    <div style="color:#bbb;font-size:11px">其餘宮位及生年四化不受時辰影響，解析仍具參考價值。</div>
   `;
   const grid = document.getElementById('palace-grid');
   grid.parentNode.insertBefore(banner, grid);
 }
 
-// ── Tab 鎖定控制 ──────────────────────────────────────
+// ── Tab 鎖定 ──────────────────────────────────────────
 function applyTabLocks(features) {
   const btnLy = document.getElementById('tab-btn-liunian');
   const btnPr = document.getElementById('tab-btn-person');
-
   if (!features.liunian) {
     btnLy.classList.add('locked-tab');
-    btnLy.onclick = (e) => { e.stopPropagation(); };
-    document.getElementById('liunian-content').innerHTML = `
-      <div class="locked-panel">
-        <div class="lock-icon">🔒</div>
-        <p>此功能未開放</p>
-      </div>`;
+    btnLy.onclick = e => e.stopPropagation();
+    document.getElementById('liunian-content').innerHTML =
+      '<div class="locked-panel"><div class="lock-icon">🔒</div><p>此功能未開放</p></div>';
   }
   if (!features.person) {
     btnPr.classList.add('locked-tab');
-    btnPr.onclick = (e) => { e.stopPropagation(); };
-    document.getElementById('person-content').innerHTML = `
-      <div class="locked-panel">
-        <div class="lock-icon">🔒</div>
-        <p>此功能未開放</p>
-      </div>`;
+    btnPr.onclick = e => e.stopPropagation();
+    document.getElementById('person-content').innerHTML =
+      '<div class="locked-panel"><div class="lock-icon">🔒</div><p>此功能未開放</p></div>';
   }
 }
 
-// ── AI 呼叫 ────────────────────────────────────────────
+// ── AI 呼叫（透過自己的伺服器，Key 不外露）─────────────
 async function callAI(prompt, maxTokens = 1200) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('/api/chat', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: maxTokens,
-      messages: [{ role: 'user', content: prompt }],
-    }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, maxTokens }),
   });
   if (!res.ok) throw new Error(`API ${res.status}`);
   const json = await res.json();
-  return json.content?.[0]?.text || '解析失敗，請稍後重試。';
+  if (json.error) throw new Error(json.error);
+  return json.text;
 }
 
 function textToHtml(text) {
@@ -276,7 +253,7 @@ async function analyzePalace(elClicked, palace) {
   const bodyEl = document.getElementById('analysis-body');
   if (analysisCache[key]) { bodyEl.innerHTML = analysisCache[key]; return; }
   showLoading(bodyEl);
-  const unknownNote = ch.isUnknown && palace.isMing ? '\n注意：此命主時辰不詳，命宮為推算值，請說明此限制。' : '';
+  const unknownNote = ch.isUnknown && palace.isMing ? '\n注意：時辰不詳，命宮為推算值，請說明此限制。' : '';
   const prompt = `你是資深紫微斗數命理師，請用繁體中文詳細解析以下宮位。
 
 命主：${p.name}（${p.gender==='male'?'男':'女'}）
@@ -340,7 +317,7 @@ async function loadPersonMatch() {
   const p = currentPerson, ch = currentChart;
   const key = 'person-match';
   if (analysisCache[key]) { bodyEl.innerHTML = analysisCache[key]; return; }
-  const unknownNote = ch.isUnknown ? '\n注意：時辰不詳，命宮為推算值，請以生年四化及整體命格為主要依據。' : '';
+  const unknownNote = ch.isUnknown ? '\n注意：時辰不詳，請以生年四化及整體命格為主要依據。' : '';
   const prompt = `你是紫微斗數命理師，根據以下命盤特質分析命主最像哪位歷史或知名人物。
 
 命主：${p.name}（${p.gender==='male'?'男':'女'}）
@@ -362,32 +339,25 @@ function loadChartScreen(person) {
   currentPerson = person;
   currentChart  = calcChart(person.year, person.month, person.day, person.hour);
   analysisCache = {};
-
   const hourDisplay = person.hour === UNKNOWN_HOUR ? '時辰不詳' : person.hour;
   document.getElementById('pi-avatar').textContent = person.name[0];
   document.getElementById('pi-name').textContent   = person.name;
   document.getElementById('pi-info').textContent   = `${person.year}年${person.month}月${person.day}日・${hourDisplay}・${currentChart.yearGan}${currentChart.yearZhi}年`;
   document.getElementById('pi-expire').textContent = expireLabel(person.exp);
   document.getElementById('ly-year').value = new Date().getFullYear();
-
   document.getElementById('analysis-title').textContent = '宮位解析';
   document.getElementById('analysis-body').innerHTML = '<div class="placeholder-text">點擊上方任一宮位<br>即時解析星曜意涵</div>';
   document.getElementById('ly-body').innerHTML = '<div class="placeholder-text">輸入年份後點擊查詢<br>分析該年整體運勢</div>';
   document.getElementById('person-body').innerHTML = `<div class="loading-dots"><div class="dot-anim"><span>●</span><span>●</span><span>●</span></div><span style="color:#bbb;font-size:13px">比對分析中…</span></div>`;
-
   document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active','locked-tab'); b.onclick = null; });
   document.querySelector('.tab-btn[data-tab="chart"]').classList.add('active');
   document.getElementById('tab-chart').style.display   = 'block';
   document.getElementById('tab-liunian').style.display = 'none';
   document.getElementById('tab-person').style.display  = 'none';
-
-  // 套用功能鎖定
   applyTabLocks(person.features || { liunian: true, person: true });
-
   renderGrid(currentChart);
   renderUnknownBanner(person, currentChart);
   showScreen('screen-chart');
-
   if (person.features?.person) loadPersonMatch();
 }
 
@@ -396,7 +366,6 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ── 初始化 ───────────────────────────────────────────────
 (function init() {
   const person = parseLink();
   if (person) {
@@ -407,7 +376,6 @@ function showScreen(id) {
   }
 })();
 
-// ── 產生連結 ─────────────────────────────────────────────
 document.getElementById('btn-generate').addEventListener('click', () => {
   const name   = document.getElementById('inp-name').value.trim() || '命主';
   const gender = document.getElementById('inp-gender').value;
@@ -415,39 +383,27 @@ document.getElementById('btn-generate').addEventListener('click', () => {
   const month  = parseInt(document.getElementById('inp-month').value);
   const day    = parseInt(document.getElementById('inp-day').value);
   const hour   = document.getElementById('inp-hour').value;
-
   if (!year || !month || !day || !hour) { alert('請填寫完整出生資訊'); return; }
   if (year < 1920 || year > 2010)       { alert('請輸入正確年份（1920–2010）'); return; }
   if (day < 1 || day > 31)              { alert('請輸入正確日期'); return; }
-
   const features = { liunian: featureState.liunian, person: featureState.person };
   const link     = buildLink(name, gender, year, month, day, hour, features);
   const expireTs = Date.now() + EXPIRE_DAYS * 24 * 60 * 60 * 1000;
-
-  // 功能標籤
   const featuresEl = document.getElementById('link-features');
   featuresEl.innerHTML = '';
-  const addTag = (text) => {
-    const t = document.createElement('span');
-    t.className = 'link-feature-tag';
-    t.textContent = text;
-    featuresEl.appendChild(t);
-  };
-  addTag('命盤解析');
-  if (features.liunian) addTag('流年運勢');
-  if (features.person)  addTag('相似人物');
-
+  ['命盤解析', ...(features.liunian?['流年運勢']:[]), ...(features.person?['相似人物']:[])].forEach(t => {
+    const tag = document.createElement('span');
+    tag.className = 'link-feature-tag';
+    tag.textContent = t;
+    featuresEl.appendChild(tag);
+  });
   document.getElementById('link-url').textContent    = link;
   document.getElementById('link-expire').textContent = `⏱ 有效期限：3 天（${expireLabel(expireTs).replace('有效期限：','')} 到期）`;
   document.getElementById('link-box').style.display  = 'block';
   document.getElementById('copy-ok').style.display   = 'none';
-
-  document.getElementById('btn-preview')._person = {
-    name, gender, year, month, day, hour, exp: expireTs, features
-  };
+  document.getElementById('btn-preview')._person = { name, gender, year, month, day, hour, exp: expireTs, features };
 });
 
-// ── 複製 / 預覽 ──────────────────────────────────────────
 document.getElementById('btn-copy').addEventListener('click', () => {
   navigator.clipboard.writeText(document.getElementById('link-url').textContent).then(() => {
     const ok = document.getElementById('copy-ok');
@@ -462,7 +418,6 @@ document.getElementById('btn-preview').addEventListener('click', function() {
 
 document.getElementById('btn-liunian').addEventListener('click', queryLiunian);
 
-// ── Tab 切換 ─────────────────────────────────────────────
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     if (btn.classList.contains('locked-tab')) return;
