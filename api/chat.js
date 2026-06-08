@@ -1,4 +1,10 @@
 export default async function handler(req, res) {
+  if (req.method === 'GET' && req.query.action === 'verify') {
+    const { pwd } = req.query;
+    const correct = process.env.ADMIN_PASSWORD || '0420';
+    return res.status(200).json({ ok: pwd === correct });
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -20,7 +26,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-haiku-4-5',
         max_tokens: maxTokens || 1200,
         messages: [{ role: 'user', content: prompt }],
       }),
@@ -28,7 +34,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Anthropic 回傳錯誤時直接把錯誤訊息傳回前端
     if (!response.ok) {
       return res.status(response.status).json({
         error: data.error?.message || `Anthropic API 錯誤 ${response.status}`,

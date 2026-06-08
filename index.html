@@ -19,6 +19,21 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── 密碼畫面 ── */
+.lock-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;gap:20px}
+.lock-title{font-family:'Noto Serif TC',serif;font-size:32px;color:var(--gold-dk);letter-spacing:8px}
+.lock-sub{font-size:12px;color:#bbb;letter-spacing:3px}
+.lock-circle{width:80px;height:80px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--gold-dk);margin:8px 0}
+.pin-dots{display:flex;gap:16px;margin:8px 0}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border);background:#fff;transition:all .2s}
+.pin-dot.filled{background:var(--gold-dk);border-color:var(--gold-dk)}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+.pin-btn{width:72px;height:72px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:22px;font-family:'Noto Serif TC',serif;color:var(--ink);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.pin-btn:hover{background:#fff8e0;border-color:var(--gold)}
+.pin-btn:active{background:var(--gold-dk);color:#fff;border-color:var(--gold-dk)}
+.pin-btn.del{font-size:16px;color:#aaa}
+.pin-error{font-size:12px;color:var(--red);letter-spacing:2px;height:18px;text-align:center}
+
 .app-header{text-align:center;padding:36px 0 24px;border-bottom:1px solid var(--border);margin-bottom:28px}
 .app-header h1{font-size:28px;color:var(--gold-dk);letter-spacing:6px}
 .app-header p{font-size:12px;color:#999;margin-top:6px;letter-spacing:2px}
@@ -29,49 +44,32 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
 .form-group{display:flex;flex-direction:column;gap:5px}
 .form-group label{font-size:11px;color:var(--gold-dk);font-weight:500;letter-spacing:1px}
-.form-group input,.form-group select{
-  padding:10px 13px;border:1px solid var(--border);border-radius:8px;
-  background:#fff;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--ink);
-  outline:none;transition:border-color .2s
-}
+.form-group input,.form-group select{padding:10px 13px;border:1px solid var(--border);border-radius:8px;background:#fff;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--ink);outline:none;transition:border-color .2s}
 .form-group input:focus,.form-group select:focus{border-color:var(--gold)}
 .form-note{font-size:10px;color:#ccc;margin-top:3px}
 
-/* ── 功能勾選區 ── */
+/* 性別選擇 */
+.gender-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.gender-btn{flex:1;padding:10px;border:none;background:#fff;font-size:14px;font-family:'Noto Serif TC',serif;color:#aaa;cursor:pointer;transition:all .2s;letter-spacing:2px}
+.gender-btn.active{background:var(--gold-dk);color:#fff}
+
+/* 功能勾選 */
 .feature-section{margin-top:20px}
 .feature-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
-.feature-item{
-  border:1.5px solid var(--border);border-radius:10px;padding:14px 12px;
-  cursor:pointer;transition:all .2s;background:#fff;position:relative;user-select:none
-}
+.feature-item{border:1.5px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;transition:all .2s;background:#fff;position:relative;user-select:none}
 .feature-item:hover{border-color:var(--gold);background:#fffdf5}
 .feature-item.checked{border-color:var(--gold-dk);background:#fffae8}
 .feature-item.locked{opacity:.7;cursor:default;border-color:#e0dcd4;background:#f8f5ef}
-.feature-check{
-  width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:8px;font-size:12px;color:var(--gold-dk);
-  background:#fff;transition:all .2s
-}
+.feature-check{width:18px;height:18px;border:1.5px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;font-size:12px;color:var(--gold-dk);background:#fff;transition:all .2s}
 .feature-item.checked .feature-check{background:var(--gold-dk);border-color:var(--gold-dk);color:#fff}
 .feature-item.locked .feature-check{background:#e0dcd4;border-color:#e0dcd4;color:#fff}
 .feature-name{font-size:13px;font-weight:500;color:var(--ink);font-family:'Noto Serif TC',serif;letter-spacing:1px}
 .feature-desc{font-size:11px;color:#aaa;margin-top:4px;line-height:1.5}
-.feature-badge{
-  position:absolute;top:8px;right:8px;
-  font-size:9px;background:var(--gold-dk);color:#fff;
-  padding:1px 6px;border-radius:10px;letter-spacing:1px
-}
+.feature-badge{position:absolute;top:8px;right:8px;font-size:9px;background:var(--gold-dk);color:#fff;padding:1px 6px;border-radius:10px;letter-spacing:1px}
 .feature-badge.free{background:#888}
 
-.btn-main{
-  width:100%;padding:14px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));
-  color:#fff;border:none;border-radius:10px;font-size:15px;font-family:'Noto Serif TC',serif;
-  letter-spacing:4px;cursor:pointer;margin-top:16px;transition:opacity .2s;
-  box-shadow:0 4px 12px rgba(140,90,0,0.2)
-}
+.btn-main{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));color:#fff;border:none;border-radius:10px;font-size:15px;font-family:'Noto Serif TC',serif;letter-spacing:4px;cursor:pointer;margin-top:16px;transition:opacity .2s;box-shadow:0 4px 12px rgba(140,90,0,0.2)}
 .btn-main:hover{opacity:.88}
-.btn-main:disabled{opacity:.4;cursor:not-allowed}
 
 .link-box{background:var(--panel);border:1.5px solid var(--gold);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow)}
 .link-box-title{font-size:12px;color:var(--gold-dk);letter-spacing:2px;margin-bottom:10px;font-weight:500}
@@ -85,12 +83,15 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
 .btn-preview:hover{background:#fff8e0}
 .copy-ok{font-size:11px;color:green;margin-left:8px;display:none}
 
-/* ── 命盤畫面 ── */
+/* 命盤畫面 */
 .person-banner{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:14px 18px;background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
-.person-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dk),var(--gold));display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;font-family:'Noto Serif TC',serif;flex-shrink:0;box-shadow:0 2px 8px rgba(140,90,0,0.25)}
+.person-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dk),var(--gold));display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;font-family:'Noto Serif TC',serif;flex-shrink:0}
 .person-detail h3{font-size:16px;color:var(--ink)}
 .person-detail p{font-size:11px;color:#aaa;margin-top:3px;letter-spacing:1px}
 .expire-badge{font-size:10px;background:#fff3e0;color:#e08000;border:1px solid #f5c060;border-radius:20px;padding:2px 10px;margin-top:5px;display:inline-block}
+.gender-badge{font-size:10px;padding:2px 10px;border-radius:20px;margin-top:5px;display:inline-block;margin-left:6px}
+.gender-badge.male{background:#e6f1fb;color:#185fa5;border:1px solid #85b7eb}
+.gender-badge.female{background:#fbeaf0;color:#993556;border:1px solid #ed93b1}
 
 .tab-nav{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:22px;box-shadow:var(--shadow)}
 .tab-btn{flex:1;padding:11px 4px;background:var(--panel);border:none;font-size:13px;font-family:'Noto Serif TC',serif;color:#999;cursor:pointer;transition:all .2s;letter-spacing:2px}
@@ -99,7 +100,7 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
 .tab-btn.locked-tab{opacity:.4;cursor:not-allowed}
 
 .palace-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:4px;aspect-ratio:1;margin-bottom:20px}
-.palace{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:7px 6px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:2px;position:relative}
+.palace{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:7px 6px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:2px}
 .palace:hover{border-color:var(--gold);transform:scale(1.03);z-index:2;box-shadow:0 4px 10px rgba(140,90,0,0.12)}
 .palace.selected{border-color:var(--gold);border-width:2px;background:#fff8e0}
 .palace.mingong{background:linear-gradient(135deg,#fdf0d0,#fae8a0);border-color:var(--gold);border-width:1.5px}
@@ -127,25 +128,15 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
 .dot-anim span:nth-child(2){animation-delay:.2s}
 .dot-anim span:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
-
-/* 鎖定功能提示 */
 .locked-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;color:#ccc;text-align:center;gap:10px}
 .locked-panel .lock-icon{font-size:32px;opacity:.4}
 .locked-panel p{font-size:13px;letter-spacing:1px}
 
-.liunian-form{display:flex;gap:12px;align-items:flex-end;margin-bottom:18px}
-.liunian-form .form-group{flex:1}
-.btn-query{padding:10px 22px;background:var(--gold-dk);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:'Noto Serif TC',serif;letter-spacing:2px;white-space:nowrap;transition:opacity .2s}
-.btn-query:hover{opacity:.85}
-.btn-query:disabled{opacity:.5;cursor:not-allowed}
-
 .match-badge{display:inline-block;background:linear-gradient(135deg,var(--gold-dk),var(--gold));color:#fff;font-size:11px;padding:3px 12px;border-radius:20px;margin-bottom:14px;font-family:'Noto Serif TC',serif;letter-spacing:2px}
-
 .expired-box{text-align:center;padding:60px 20px}
 .expired-icon{font-size:48px;margin-bottom:20px}
 .expired-box h2{font-size:22px;color:var(--gold-dk);margin-bottom:12px;letter-spacing:3px}
 .expired-box p{font-size:14px;color:#999;line-height:1.8}
-
 .app-footer{text-align:center;padding:20px 0;font-size:11px;color:#ccc;letter-spacing:1px;margin-top:20px}
 
 @media(max-width:520px){
@@ -156,35 +147,64 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
   .palace-name{font-size:9px}.star-main{font-size:10px}.star-aux,.star-hua{font-size:8px}
   .center-title{font-size:12px}
   .tab-btn{font-size:11px;padding:10px 2px}
-  .liunian-form{flex-direction:column}.btn-query{width:100%}
   .btn-copy,.btn-preview{width:100%;margin-bottom:8px;margin-right:0}
+  .pin-pad{grid-template-columns:repeat(3,64px);gap:10px}
+  .pin-btn{width:64px;height:64px;font-size:20px}
 }
 </style>
 </head>
 <body>
 
-<!-- ① 輸入畫面 -->
-<div class="screen active" id="screen-input">
+<!-- ① 密碼畫面 -->
+<div class="screen active" id="screen-lock">
+  <div class="lock-screen">
+    <div class="lock-title">天機閣</div>
+    <div class="lock-sub">奇門命論・管理者入口</div>
+    <div class="lock-circle">🔐</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="dot-0"></div>
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinInput('1')">1</button>
+      <button class="pin-btn" onclick="pinInput('2')">2</button>
+      <button class="pin-btn" onclick="pinInput('3')">3</button>
+      <button class="pin-btn" onclick="pinInput('4')">4</button>
+      <button class="pin-btn" onclick="pinInput('5')">5</button>
+      <button class="pin-btn" onclick="pinInput('6')">6</button>
+      <button class="pin-btn" onclick="pinInput('7')">7</button>
+      <button class="pin-btn" onclick="pinInput('8')">8</button>
+      <button class="pin-btn" onclick="pinInput('9')">9</button>
+      <button class="pin-btn del" onclick="pinDelete()">⌫</button>
+      <button class="pin-btn" onclick="pinInput('0')">0</button>
+      <button class="pin-btn del" onclick="pinClear()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- ② 輸入畫面 -->
+<div class="screen" id="screen-input">
   <div class="app-header">
     <h1>天機閣</h1>
     <p>奇門命論・紫微斗數命盤解析</p>
   </div>
-
   <div class="form-card">
     <div class="section-label">命主資料</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>姓名（可暱稱）</label>
-        <input type="text" id="inp-name" placeholder="例：小明" maxlength="10">
-      </div>
-      <div class="form-group">
-        <label>性別</label>
-        <select id="inp-gender">
-          <option value="male">男</option>
-          <option value="female">女</option>
-        </select>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>姓名（可暱稱）</label>
+      <input type="text" id="inp-name" placeholder="例：小明" maxlength="10">
+    </div>
+    <div class="form-group" style="margin-bottom:14px">
+      <label>性別</label>
+      <div class="gender-toggle">
+        <button class="gender-btn active" id="gbtn-male" onclick="setGender('male')">男命</button>
+        <button class="gender-btn" id="gbtn-female" onclick="setGender('female')">女命</button>
       </div>
     </div>
+    <input type="hidden" id="inp-gender" value="male">
     <div class="section-label" style="margin-top:6px">出生資訊</div>
     <div class="form-row-3">
       <div class="form-group">
@@ -226,45 +246,33 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
         <option value="戌時">戌時（19:00–21:00）</option>
         <option value="亥時">亥時（21:00–23:00）</option>
       </select>
-      <div class="form-note">不知道時辰可選「時辰不詳」，AI 會推論最可能的命宮</div>
+      <div class="form-note">不知道時辰可選「時辰不詳」</div>
     </div>
-
-    <!-- 功能選擇 -->
     <div class="feature-section">
       <div class="section-label">選擇開放功能</div>
       <div class="feature-grid">
-
-        <!-- 命盤：固定開啟 -->
         <div class="feature-item locked" id="feat-chart">
           <div class="feature-check">✓</div>
           <div class="feature-name">命盤解析</div>
-          <div class="feature-desc">十二宮位・點擊即解析・性格事業感情</div>
+          <div class="feature-desc">十二宮位・點擊即解析</div>
           <div class="feature-badge free">基本</div>
         </div>
-
-        <!-- 流年 -->
         <div class="feature-item" id="feat-liunian" onclick="toggleFeature('liunian')">
           <div class="feature-check" id="check-liunian"></div>
           <div class="feature-name">流年運勢</div>
-          <div class="feature-desc">查詢任意年份・事業財運感情健康</div>
+          <div class="feature-desc">今年運勢完整分析</div>
           <div class="feature-badge">加選</div>
         </div>
-
-        <!-- 相似人物 -->
         <div class="feature-item" id="feat-person" onclick="toggleFeature('person')">
           <div class="feature-check" id="check-person"></div>
           <div class="feature-name">相似人物</div>
-          <div class="feature-desc">命盤對應歷史人物比對・人生原型</div>
+          <div class="feature-desc">歷史人物命盤比對</div>
           <div class="feature-badge">加選</div>
         </div>
-
       </div>
     </div>
-
     <button class="btn-main" id="btn-generate">✦ 產生專屬連結</button>
   </div>
-
-  <!-- 連結結果 -->
   <div class="link-box" id="link-box" style="display:none">
     <div class="link-box-title">✦ 專屬命盤連結</div>
     <div class="link-features" id="link-features"></div>
@@ -274,11 +282,10 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
     <button class="btn-preview" id="btn-preview">預覽命盤</button>
     <span class="copy-ok" id="copy-ok">✓ 已複製</span>
   </div>
-
   <div class="app-footer">天機閣・奇門命論</div>
 </div>
 
-<!-- ② 命盤畫面 -->
+<!-- ③ 命盤畫面 -->
 <div class="screen" id="screen-chart">
   <div class="person-banner">
     <div class="person-avatar" id="pi-avatar">命</div>
@@ -286,14 +293,14 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
       <h3 id="pi-name">—</h3>
       <p id="pi-info">—</p>
       <span class="expire-badge" id="pi-expire">—</span>
+      <span class="gender-badge" id="pi-gender-badge">—</span>
     </div>
   </div>
-  <div class="tab-nav" id="tab-nav">
+  <div class="tab-nav">
     <button class="tab-btn active" data-tab="chart">命　盤</button>
     <button class="tab-btn" data-tab="liunian" id="tab-btn-liunian">流　年</button>
     <button class="tab-btn" data-tab="person" id="tab-btn-person">相似人物</button>
   </div>
-
   <div id="tab-chart">
     <div class="palace-grid" id="palace-grid"></div>
     <div class="analysis-panel">
@@ -303,25 +310,19 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
       </div>
     </div>
   </div>
-
   <div id="tab-liunian" style="display:none">
     <div id="liunian-content">
-      <div class="liunian-form">
-        <div class="form-group">
-          <label>查詢年份（西元）</label>
-          <input type="number" id="ly-year" placeholder="例：2026" min="2000" max="2060">
-        </div>
-        <button class="btn-query" id="btn-liunian">查詢流年</button>
-      </div>
       <div class="analysis-panel">
         <div class="analysis-header"><span>☽</span><h3 id="ly-title">流年運勢</h3></div>
         <div class="analysis-body" id="ly-body">
-          <div class="placeholder-text">輸入年份後點擊查詢<br>分析該年整體運勢</div>
+          <div class="loading-dots">
+            <div class="dot-anim"><span>●</span><span>●</span><span>●</span></div>
+            <span style="color:#bbb;font-size:13px">載入中…</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
   <div id="tab-person" style="display:none">
     <div id="person-content">
       <div class="analysis-panel">
@@ -335,11 +336,10 @@ h1,h2,h3{font-family:'Noto Serif TC',serif}
       </div>
     </div>
   </div>
-
   <div class="app-footer">天機閣・奇門命論</div>
 </div>
 
-<!-- ③ 過期畫面 -->
+<!-- ④ 過期畫面 -->
 <div class="screen" id="screen-expired">
   <div class="expired-box">
     <div class="expired-icon">⌛</div>
