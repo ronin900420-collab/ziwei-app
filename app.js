@@ -2,7 +2,7 @@
 //  天機閣・奇門命論  —  app.js  v4（功能分層）
 //  ⚠️  請將下方 API_KEY 換成您自己的 Anthropic API Key
 // ══════════════════════════════════════════════════════
-const API_KEY = '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'; // ← 換成您的 Key
+const API_KEY = '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'; // ← 換成您的 Key
 
 const EXPIRE_DAYS = 3;
 const UNKNOWN_HOUR = '時辰不詳';
