@@ -336,7 +336,7 @@ document.getElementById('btn-generate').addEventListener('click',()=>{
   const day=parseInt(document.getElementById('inp-day').value);
   const hour=document.getElementById('inp-hour').value;
   if(!year||!month||!day||!hour){alert('請填寫完整出生資訊');return;}
-  if(year<1920||year>2010){alert('請輸入正確年份（1920–2010）');return;}
+  if(year<1900||year>2026){alert('請輸入正確年份（1900–2026）');return;}
   if(day<1||day>31){alert('請輸入正確日期');return;}
   const features={liunian:featureState.liunian,person:featureState.person};
   const link=buildLink(name,gender,year,month,day,hour,features);
